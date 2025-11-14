@@ -1,0 +1,64 @@
+# Development files
+*.log
+.DS_Store
+.env
+.env.local
+.env.development
+.env.test
+.env.production
+
+# Testing
+test-results/
+playwright-report/
+coverage/
+.nyc_output
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+Thumbs.db
+.DS_Store
+
+# Node
+node_modules/
+
+# Build
+dist/
+build/
+
+# Temporary files
+tmp/
+temp/
+
+# Documentation (keep main README)
+docs/
+*.md
+!CLI-README.md
+
+# Scripts that aren't needed in the package
+*.ps1
+run-tests.ps1
+cleanup.ps1
+
+# Test files
+*.spec.ts
+*.test.js
+test/
+tests/
+__tests__/
+
+# Config files not needed in package
+tsconfig.json
+playwright.config.ts
+.github/copilot-instructions.mdd
+.github/instructions/copilotinstruction.mdd
+
+# Keep only necessary files for npm
+!bin/
+!lib/
+!templates/
+!package.json

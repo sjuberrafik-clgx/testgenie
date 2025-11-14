@@ -1,0 +1,55 @@
+{
+  "name": "testgenie-cli",
+  "version": "1.0.0",
+  "description": "A CLI tool to install GitHub Chatmodes for VS Code projects - TestGenie, BugGenie, and ScriptGenerator",
+  "main": "bin/cli.js",
+  "bin": {
+    "install-chatmodes": "./bin/cli.js",
+    "chatmodes": "./bin/cli.js",
+    "testgenie": "./bin/cli.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sjuberrafik-clgx/testgenie.git"
+  },
+  "homepage": "https://github.com/sjuberrafik-clgx/testgenie#readme",
+  "bugs": {
+    "url": "https://github.com/sjuberrafik-clgx/testgenie/issues"
+  },
+  "keywords": [
+    "github",
+    "chatmodes",
+    "vscode",
+    "copilot",
+    "cli",
+    "automation",
+    "testgenie",
+    "buggenie",
+    "testing",
+    "jira"
+  ],
+  "author": "sjuberrafik-clgx",
+  "license": "MIT",
+  "preferGlobal": true,
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "dependencies": {
+    "commander": "^9.0.0",
+    "chalk": "^4.1.2",
+    "inquirer": "^8.2.4",
+    "fs-extra": "^10.1.0",
+    "axios": "^1.9.0",
+    "ora": "^5.4.1"
+  },
+  "scripts": {
+    "start": "node bin/cli.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "files": [
+    "bin/",
+    "lib/",
+    "templates/",
+    "README.md"
+  ]
+}
