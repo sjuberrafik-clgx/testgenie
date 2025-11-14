@@ -1,12 +1,30 @@
-# Publishing TestGenie CLI to NPM
+# 🚀 TestGenie CLI Deployment Options
 
-## Prerequisites
+## 📍 **Current Status**
+Your TestGenie CLI is now ready for deployment! You have several options based on your organization's needs.
 
-1. **NPM Account**: Create an account at https://www.npmjs.com/
-2. **Git Repository**: Your code is already hosted at https://github.com/sjuberrafik-clgx/testgenie
-3. **Node.js**: Version 14 or higher
+## 🎯 **Deployment Options**
 
-## Step 1: Prepare for Publishing
+### **Option 1: NPM Public Registry** ⭐ (Easiest)
+
+**Makes available via**: `npx testgenie-cli install` globally
+
+```bash
+# 1. Create NPM account (if needed)
+npm login
+
+# 2. Publish to NPM
+npm publish
+
+# 3. Test installation
+npx testgenie-cli install
+```
+
+**Benefits**:
+- ✅ Available worldwide via `npx`
+- ✅ Automatic versioning and updates
+- ✅ Easy distribution to teams
+- ✅ Professional package management
 
 ### Your package.json is already configured with:
 

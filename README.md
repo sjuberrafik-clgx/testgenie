@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # TestGenie CLI
 
 🧞‍♀️ **AI-Powered Testing Tools for VS Code Projects**
@@ -161,3 +162,7 @@ npx testgenie-cli install
 ```
 
 **Happy Testing!** 🧞‍♀️🚀
+=======
+# testgenie
+Test Genie helps to generate Manual/Automation test cases using CoPilot
+>>>>>>> 7bfc5da2263a3c424810a22cca8da5e5dac748c7
