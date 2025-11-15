@@ -84,13 +84,20 @@
             border-radius: 12px; 
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
             height: 300px;
+            max-height: 300px;
+            min-height: 300px;
             display: flex;
             flex-direction: column;
+            overflow: hidden;
+            position: relative;
         }
         
         .chart-container canvas {
             flex: 1;
-            max-height: 250px;
+            max-height: 250px !important;
+            max-width: 100% !important;
+            height: 250px !important;
+            position: relative !important;
         }
         
         .chart-title {
@@ -98,6 +105,23 @@
             font-weight: 600;
             margin-bottom: 15px;
             color: #333;
+        }
+        
+        .chart-wrapper {
+            height: 250px !important;
+            max-height: 250px !important;
+            min-height: 250px !important;
+            overflow: hidden !important;
+            position: relative !important;
+        }
+        
+        .chart-wrapper canvas {
+            width: 100% !important;
+            height: 250px !important;
+            max-height: 250px !important;
+            position: absolute !important;
+            top: 0 !important;
+            left: 0 !important;
         }
         
         .loading {
@@ -236,11 +260,15 @@
             <div class="charts-grid">
                 <div class="chart-container">
                     <div class="chart-title">📈 Installation Trend (Last 7 Days)</div>
-                    <canvas id="installChart"></canvas>
+                    <div class="chart-wrapper" style="position: relative; height: 250px; overflow: hidden;">
+                        <canvas id="installChart"></canvas>
+                    </div>
                 </div>
                 <div class="chart-container">
                     <div class="chart-title">💻 Platform Distribution</div>
-                    <canvas id="platformChart"></canvas>
+                    <div class="chart-wrapper" style="position: relative; height: 250px; overflow: hidden;">
+                        <canvas id="platformChart"></canvas>
+                    </div>
                 </div>
             </div>
             
@@ -452,6 +480,10 @@
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
+                    interaction: {
+                        intersect: false,
+                        mode: 'index'
+                    },
                     plugins: {
                         legend: { display: false }
                     },
@@ -460,6 +492,10 @@
                             beginAtZero: true,
                             ticks: { precision: 0 }
                         }
+                    },
+                    onResize: function(chart, size) {
+                        // Prevent chart from changing height during resize
+                        chart.canvas.parentNode.style.height = '250px';
                     }
                 }
             });
@@ -490,6 +526,10 @@
                             position: 'bottom',
                             labels: { padding: 20 }
                         }
+                    },
+                    onResize: function(chart, size) {
+                        // Prevent chart from changing height during resize
+                        chart.canvas.parentNode.style.height = '250px';
                     }
                 }
             });
@@ -534,7 +574,38 @@
         }
 
         // Load analytics on page load
-        document.addEventListener('DOMContentLoaded', loadAnalytics);
+        document.addEventListener('DOMContentLoaded', () => {
+            loadAnalytics();
+            
+            // Add resize observer to prevent chart container expansion
+            const chartContainers = document.querySelectorAll('.chart-container');
+            chartContainers.forEach(container => {
+                const resizeObserver = new ResizeObserver(entries => {
+                    entries.forEach(entry => {
+                        // Lock height to prevent expansion
+                        entry.target.style.height = '300px';
+                        entry.target.style.maxHeight = '300px';
+                    });
+                });
+                resizeObserver.observe(container);
+            });
+            
+            // Prevent scroll-triggered chart resizing
+            let scrollTimeout;
+            window.addEventListener('scroll', () => {
+                clearTimeout(scrollTimeout);
+                scrollTimeout = setTimeout(() => {
+                    // Ensure chart containers maintain fixed height after scroll
+                    chartContainers.forEach(container => {
+                        container.style.height = '300px';
+                        const canvas = container.querySelector('canvas');
+                        if (canvas) {
+                            canvas.style.height = '250px';
+                        }
+                    });
+                }, 100);
+            });
+        });
         
         // Auto-refresh every 30 seconds for real-time updates
         setInterval(loadAnalytics, 30 * 1000);
