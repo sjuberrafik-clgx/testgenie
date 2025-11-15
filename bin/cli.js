@@ -331,7 +331,19 @@ async function installProjectDependencies(projectPath, force = false) {
 async function setupMcpConfiguration(sourceDir, force = false) {
   const userDataPath = path.join(os.homedir(), 'AppData', 'Roaming', 'Code', 'User');
   const mcpConfigPath = path.join(userDataPath, 'mcp.json');
-  const templateMcpPath = path.join(sourceDir, 'mcp.json');
+  
+  // Try multiple possible locations for mcp.json template
+  let templateMcpPath = path.join(sourceDir, 'mcp.json');
+  
+  // If not found, try the templates subdirectory
+  if (!fs.existsSync(templateMcpPath)) {
+    templateMcpPath = path.join(sourceDir, 'templates', 'mcp.json');
+  }
+  
+  // If still not found, try relative to the CLI script location
+  if (!fs.existsSync(templateMcpPath)) {
+    templateMcpPath = path.join(__dirname, '..', 'templates', 'mcp.json');
+  }
   
   // Ensure VS Code User directory exists
   await fs.ensureDir(userDataPath);
@@ -347,13 +359,44 @@ async function setupMcpConfiguration(sourceDir, force = false) {
   }
   
   // Read template MCP config
-  const templateMcpConfig = await fs.readJson(templateMcpPath);
-  
-  // Merge configurations
-  mcpConfig.mcpServers = {
-    ...mcpConfig.mcpServers,
-    ...templateMcpConfig.mcpServers
-  };
+  if (!fs.existsSync(templateMcpPath)) {
+    console.log(chalk.yellow(`\n⚠️  Warning: MCP template not found at ${templateMcpPath}`));
+    console.log(chalk.white(`Creating basic MCP configuration...`));
+    
+    // Create a basic MCP config with Atlassian server
+    const basicMcpConfig = {
+      servers: {
+        "atlassian/atlassian-mcp-server": {
+          "type": "http",
+          "url": "https://mcp.atlassian.com/v1/sse",
+          "gallery": "https://api.mcp.github.com/2025-09-15/v0/servers/28c650c6-5e61-4ab7-9eb2-505be6350476",
+          "version": "1.0.0"
+        }
+      }
+    };
+    
+    mcpConfig.servers = {
+      ...mcpConfig.servers,
+      ...basicMcpConfig.servers
+    };
+  } else {
+    const templateMcpConfig = await fs.readJson(templateMcpPath);
+    
+    // Merge configurations (preserve existing servers)
+    if (!mcpConfig.servers) {
+      mcpConfig.servers = {};
+    }
+    
+    mcpConfig.servers = {
+      ...mcpConfig.servers,
+      ...templateMcpConfig.servers
+    };
+    
+    // Also copy inputs if they exist
+    if (templateMcpConfig.inputs) {
+      mcpConfig.inputs = templateMcpConfig.inputs;
+    }
+  }
   
   // Write updated MCP config
   await fs.writeJson(mcpConfigPath, mcpConfig, { spaces: 2 });
