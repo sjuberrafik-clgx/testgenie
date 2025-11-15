@@ -8,10 +8,10 @@ const path = require('path');
 const ora = require('ora');
 const os = require('os');
 const { execSync } = require('child_process');
-const Analytics = require('../lib/analytics');
+const GitHubAnalytics = require('../lib/github-analytics');
 
 const packageJson = require('../package.json');
-const analytics = new Analytics();
+const analytics = new GitHubAnalytics();
 
 program
   .name('testgenie')
@@ -29,8 +29,7 @@ program
     const startTime = Date.now();
     const targetPath = projectPath || process.cwd();
     
-    // Initialize analytics (ask for consent if first time)
-    await analytics.initialize();
+    // Track installation start
     await analytics.trackInstallStart(options);
     
     console.log(chalk.blue('\n🚀 TestGenie CLI\n'));
@@ -152,7 +151,6 @@ program
   .command('list')
   .description('List available chatmodes and features')
   .action(async () => {
-    await analytics.initialize();
     await analytics.trackCommand('list');
     
     console.log(chalk.blue('\n📋 TestGenie CLI Features:\n'));
@@ -196,7 +194,6 @@ program
   .command('update')
   .description('Update existing chatmodes to latest version')
   .action(async () => {
-    await analytics.initialize();
     await analytics.trackCommand('update');
     
     const spinner = ora('Checking for updates...').start();
@@ -207,72 +204,35 @@ program
 
 program
   .command('analytics')
-  .description('Manage analytics preferences')
-  .option('--enable', 'Enable analytics')
-  .option('--disable', 'Disable analytics')
-  .option('--status', 'Show current analytics status')
+  .description('Open TestGenie Analytics Dashboard')
+  .option('--url', 'Show analytics dashboard URL')
   .action(async (options) => {
-    await analytics.initialize();
+    await analytics.trackCommand('analytics');
     
-    if (options.enable) {
-      await analytics.saveConfig({ analyticsConsent: true });
-      analytics.enabled = true;
-      console.log(chalk.green('✅ Analytics enabled. Thank you for helping improve TestGenie!'));
-      await analytics.trackCommand('analytics_enable');
-    } else if (options.disable) {
-      await analytics.saveConfig({ analyticsConsent: false });
-      analytics.enabled = false;
-      console.log(chalk.yellow('📊 Analytics disabled.'));
-    } else if (options.status) {
-      const config = await analytics.getConfig();
-      const status = config.analyticsConsent ? 'enabled' : 'disabled';
-      console.log(chalk.blue(`📊 Analytics are currently ${status}`));
+    const dashboardUrl = 'https://sjuberrafik-clgx.github.io/testgenie';
+    
+    if (options.url) {
+      console.log(chalk.blue(`📊 Analytics Dashboard: ${dashboardUrl}`));
     } else {
-      // Interactive mode
-      const config = await analytics.getConfig();
-      const currentStatus = config.analyticsConsent ? 'enabled' : 'disabled';
+      console.log(chalk.blue('\n📊 TestGenie Analytics Dashboard\n'));
+      console.log(chalk.green('🌐 Opening dashboard in your browser...'));
+      console.log(chalk.cyan(`🔗 URL: ${dashboardUrl}\n`));
       
-      console.log(chalk.blue(`\n📊 Analytics are currently ${currentStatus}\n`));
-      
-      const answer = await inquirer.prompt([
-        {
-          type: 'list',
-          name: 'action',
-          message: 'What would you like to do?',
-          choices: [
-            { name: 'Enable analytics', value: 'enable' },
-            { name: 'Disable analytics', value: 'disable' },
-            { name: 'View what data we collect', value: 'info' },
-            { name: 'Cancel', value: 'cancel' }
-          ]
+      try {
+        const { execSync } = require('child_process');
+        const platform = os.platform();
+        
+        if (platform === 'darwin') {
+          execSync(`open ${dashboardUrl}`);
+        } else if (platform === 'win32') {
+          execSync(`start ${dashboardUrl}`, { shell: true });
+        } else {
+          execSync(`xdg-open ${dashboardUrl}`);
         }
-      ]);
-      
-      switch (answer.action) {
-        case 'enable':
-          await analytics.saveConfig({ analyticsConsent: true });
-          console.log(chalk.green('✅ Analytics enabled. Thank you!'));
-          break;
-        case 'disable':
-          await analytics.saveConfig({ analyticsConsent: false });
-          console.log(chalk.yellow('📊 Analytics disabled.'));
-          break;
-        case 'info':
-          console.log(chalk.cyan('\n📋 What we collect (anonymously):'));
-          console.log('• Command usage (install, list, update)');
-          console.log('• Success/failure rates');
-          console.log('• Installation options used');
-          console.log('• System info (OS, Node.js version)');
-          console.log('• Anonymous machine fingerprint');
-          console.log('\n🚫 What we DON\'T collect:');
-          console.log('• Personal information');
-          console.log('• File contents');
-          console.log('• Project details');
-          console.log('• Usernames or emails');
-          break;
-        case 'cancel':
-          console.log('No changes made.');
-          break;
+        
+        console.log(chalk.green('✅ Dashboard opened successfully!'));
+      } catch (error) {
+        console.log(chalk.yellow('⚠️  Could not auto-open browser. Please visit the URL above manually.'));
       }
     }
   });
