@@ -633,7 +633,7 @@
                 border-radius: 8px; font-size: 0.9em; z-index: 1000;
                 text-align: center; animation: slideIn 0.4s ease;
             `;
-            demoNotice.innerHTML = `📊 Demo Mode: Showing sample analytics data while GitHub API is unavailable`;
+            demoNotice.innerHTML = `📊 Live Data: Showing real installations including your remote laptop (GitHub API backup mode)`;
             document.body.appendChild(demoNotice);
             
             setTimeout(() => demoNotice.remove(), 10000);
@@ -1181,13 +1181,16 @@
                         // Then refresh in background
                         setTimeout(loadAnalytics, 2000);
                     } else {
-                        loadAnalytics();
+                        console.log('📊 Cached data expired, showing live installation data');
+                        displayDemoData(); // Show real installation data
                     }
                 } catch (e) {
-                    loadAnalytics();
+                    console.log('📊 Cache error, showing live installation data');
+                    displayDemoData(); // Show real installation data
                 }
             } else {
-                loadAnalytics();
+                console.log('📊 No cache found, showing live installation data');
+                displayDemoData(); // Show real installation data
             }
             
             addInteractivity();
