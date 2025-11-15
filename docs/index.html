@@ -201,12 +201,36 @@
             min-height: 0;
             display: flex;
             flex-direction: column;
+            border: 1px solid rgba(0,0,0,0.05);
         }
         
         .activity-list {
             flex: 1;
             overflow-y: auto;
-            max-height: 300px;
+            max-height: 250px;
+            min-height: 200px;
+            overscroll-behavior: contain;
+            scroll-behavior: smooth;
+            scrollbar-width: thin;
+            scrollbar-color: #cbd5e1 #f1f5f9;
+        }
+        
+        .activity-list::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .activity-list::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 3px;
+        }
+        
+        .activity-list::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 3px;
+        }
+        
+        .activity-list::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
         }
         
         .activity-item {
@@ -272,8 +296,8 @@
                 gap: 15px;
             }
             .chart-container {
-                height: 250px;
-                padding: 15px;
+                height: 280px;
+                padding: 15px 15px 30px 15px;
             }
             .recent-activity {
                 min-height: 200px;
@@ -327,13 +351,13 @@
             <div class="charts-grid">
                 <div class="chart-container">
                     <div class="chart-title">📈 Installation Trend (Last 7 Days)</div>
-                    <div class="chart-wrapper" style="position: relative; height: 250px; overflow: hidden;">
+                    <div class="chart-wrapper">
                         <canvas id="installChart"></canvas>
                     </div>
                 </div>
                 <div class="chart-container">
                     <div class="chart-title">💻 Platform Distribution</div>
-                    <div class="chart-wrapper" style="position: relative; height: 250px; overflow: hidden;">
+                    <div class="chart-wrapper">
                         <canvas id="platformChart"></canvas>
                     </div>
                 </div>
@@ -620,7 +644,7 @@
                 });
             });
             
-            // Add hover effects to activity items
+            // Add hover effects to activity items and prevent scroll interference
             const observer = new MutationObserver(() => {
                 document.querySelectorAll('.activity-item').forEach(item => {
                     item.addEventListener('mouseenter', function() {
@@ -633,6 +657,42 @@
                         this.style.transform = '';
                     });
                 });
+                
+                // Prevent scroll interference on activity list
+                const activityList = document.querySelector('.activity-list');
+                if (activityList) {
+                    // Prevent wheel events from bubbling to parent
+                    activityList.addEventListener('wheel', function(e) {
+                        const { scrollTop, scrollHeight, clientHeight } = this;
+                        const isAtTop = scrollTop === 0;
+                        const isAtBottom = Math.abs(scrollTop + clientHeight - scrollHeight) < 1;
+                        
+                        // Always prevent default and stop propagation for better control
+                        if ((!isAtTop && e.deltaY < 0) || (!isAtBottom && e.deltaY > 0)) {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            e.stopImmediatePropagation();
+                        }
+                    }, { passive: false, capture: true });
+                    
+                    // Prevent touch scroll from affecting page
+                    activityList.addEventListener('touchstart', function(e) {
+                        e.stopPropagation();
+                    }, { passive: true });
+                    
+                    activityList.addEventListener('touchmove', function(e) {
+                        e.stopPropagation();
+                    }, { passive: false });
+                    
+                    // Prevent mouse events from triggering page scroll
+                    activityList.addEventListener('mousedown', function(e) {
+                        e.stopPropagation();
+                    });
+                    
+                    activityList.addEventListener('mousemove', function(e) {
+                        e.stopPropagation();
+                    });
+                }
             });
             observer.observe(document.querySelector('.activity-list'), { childList: true });
         }
@@ -778,6 +838,14 @@
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
+                    layout: {
+                        padding: {
+                            top: 20,
+                            bottom: 30,
+                            left: 10,
+                            right: 10
+                        }
+                    },
                     interaction: {
                         intersect: false,
                         mode: 'index'
@@ -786,10 +854,11 @@
                         legend: { 
                             display: true,
                             position: 'top',
+                            align: 'start',
                             labels: {
                                 usePointStyle: true,
                                 padding: 20,
-                                font: { weight: 500 }
+                                font: { weight: 500, size: 12 }
                             }
                         },
                         tooltip: {
@@ -829,7 +898,10 @@
                                     weight: 500
                                 },
                                 maxRotation: 0,
-                                padding: 8
+                                padding: 10,
+                                callback: function(value, index) {
+                                    return this.getLabelForValue(value);
+                                }
                             }
                         },
                         y: {
@@ -846,13 +918,13 @@
                                     size: 11,
                                     weight: 500
                                 },
-                                padding: 8
+                                padding: 10
                             }
                         }
                     },
                     onResize: function(chart, size) {
                         // Prevent chart from changing height during resize
-                        chart.canvas.parentNode.style.height = '250px';
+                        chart.canvas.parentNode.style.height = '280px';
                     }
                 }
             });
@@ -893,18 +965,42 @@
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
+                    layout: {
+                        padding: {
+                            top: 20,
+                            bottom: 60,
+                            left: 20,
+                            right: 20
+                        }
+                    },
                     plugins: {
                         legend: {
                             position: 'bottom',
+                            align: 'center',
                             labels: { 
-                                padding: 20,
+                                padding: 15,
                                 usePointStyle: true,
                                 pointStyle: 'circle',
                                 font: {
-                                    size: 12,
+                                    size: 11,
                                     weight: 500
                                 },
-                                color: '#333'
+                                color: '#333',
+                                boxWidth: 12,
+                                boxHeight: 12,
+                                generateLabels: function(chart) {
+                                    const original = Chart.defaults.plugins.legend.labels.generateLabels;
+                                    const labels = original.call(this, chart);
+                                    
+                                    // Ensure labels fit properly
+                                    labels.forEach((label, i) => {
+                                        if (label.text && label.text.length > 12) {
+                                            label.text = label.text.substring(0, 10) + '...';
+                                        }
+                                    });
+                                    
+                                    return labels;
+                                }
                             }
                         },
                         tooltip: {
@@ -926,7 +1022,7 @@
                     },
                     onResize: function(chart, size) {
                         // Prevent chart from changing height during resize
-                        chart.canvas.parentNode.style.height = '250px';
+                        chart.canvas.parentNode.style.height = '280px';
                     }
                 }
             });
@@ -1044,8 +1140,8 @@
                 const resizeObserver = new ResizeObserver(entries => {
                     entries.forEach(entry => {
                         // Lock height to prevent expansion
-                        entry.target.style.height = '300px';
-                        entry.target.style.maxHeight = '300px';
+                        entry.target.style.height = '350px';
+                        entry.target.style.maxHeight = '350px';
                     });
                 });
                 resizeObserver.observe(container);
@@ -1058,10 +1154,10 @@
                 scrollTimeout = setTimeout(() => {
                     // Ensure chart containers maintain fixed height after scroll
                     chartContainers.forEach(container => {
-                        container.style.height = '300px';
+                        container.style.height = '350px';
                         const canvas = container.querySelector('canvas');
                         if (canvas) {
-                            canvas.style.height = '250px';
+                            canvas.style.height = '280px';
                         }
                     });
                 }, 100);
