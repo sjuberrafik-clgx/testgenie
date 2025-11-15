@@ -239,13 +239,31 @@
             align-items: center;
             padding: 10px 0;
             border-bottom: 1px solid #eee;
+            gap: 10px;
         }
         
         .activity-item:last-child { border-bottom: none; }
         
-        .activity-user { font-weight: 600; }
-        .activity-action { color: #667eea; font-weight: 500; }
-        .activity-time { color: #888; font-size: 0.9em; }
+        .activity-icon { 
+            font-size: 1.2em; 
+            min-width: 35px;
+        }
+        .activity-user { 
+            font-weight: 600; 
+            min-width: 100px;
+            color: #4f46e5;
+        }
+        .activity-action { 
+            color: #667eea; 
+            font-weight: 500; 
+            flex: 1;
+        }
+        .activity-time { 
+            color: #888; 
+            font-size: 0.9em; 
+            min-width: 70px;
+            text-align: right;
+        }
         
         .refresh-btn {
             position: fixed;
@@ -588,10 +606,11 @@
                 ],
                 platforms: { 'win32': 3, 'darwin': 1, 'linux': 1 },
                 recentEvents: [
-                    { user: 'remote-laptop-user', action: 'npm_install', timestamp: new Date(Date.now() - 5 * 60 * 1000).toISOString(), success: true }, // Your installation
-                    { user: 'demo-user-1', action: 'install_success', timestamp: new Date().toISOString(), success: true },
-                    { user: 'demo-user-2', action: 'list', timestamp: new Date(Date.now() - 3600000).toISOString(), success: true },
-                    { user: 'demo-user-3', action: 'analytics', timestamp: new Date(Date.now() - 7200000).toISOString(), success: true }
+                    { user: 'npx-user-1', action: 'npx_usage', timestamp: new Date(Date.now() - 2 * 60 * 1000).toISOString(), success: true, installMethod: 'npx' }, // 2 minutes ago
+                    { user: 'remote-laptop-user', action: 'npm_install', timestamp: new Date(Date.now() - 5 * 60 * 1000).toISOString(), success: true, installMethod: 'global' }, // Your installation
+                    { user: 'demo-user-1', action: 'install_success', timestamp: new Date().toISOString(), success: true, installMethod: 'global' },
+                    { user: 'demo-user-2', action: 'list', timestamp: new Date(Date.now() - 3600000).toISOString(), success: true, installMethod: 'global' },
+                    { user: 'demo-user-3', action: 'analytics', timestamp: new Date(Date.now() - 7200000).toISOString(), success: true, installMethod: 'global' }
                 ],
                 dailyInstalls: {
                     [new Date().toISOString().split('T')[0]]: 2, // Today: your install + demo
@@ -1038,10 +1057,47 @@
                 return;
             }
             
+            const getActionIcon = (action, installMethod) => {
+                const icons = {
+                    'npm_install': '📦',
+                    'npx_usage': '⚡',
+                    'install_start': '🚀',
+                    'install_success': '✅',
+                    'install_error': '❌',
+                    'command': '💻',
+                    'list': '📋',
+                    'analytics': '📊',
+                    'update': '🔄'
+                };
+                const icon = icons[action] || '🔸';
+                
+                // Add method indicator for npx
+                if (installMethod === 'npx') {
+                    return icon + '🏃‍♂️'; // Running emoji for npx (one-time execution)
+                }
+                return icon;
+            };
+            
+            const getActionLabel = (action, installMethod) => {
+                const labels = {
+                    'npm_install': 'Package Installation',
+                    'npx_usage': installMethod === 'npx' ? 'NPX Command' : 'CLI Usage',
+                    'install_start': 'Installation Started', 
+                    'install_success': 'Installation Completed',
+                    'install_error': 'Installation Failed',
+                    'command': 'CLI Command',
+                    'list': 'Listed Features',
+                    'analytics': 'Viewed Analytics',
+                    'update': 'Updated Package'
+                };
+                return labels[action] || action;
+            };
+            
             activityList.innerHTML = events.map(event => `
                 <div class="activity-item">
+                    <span class="activity-icon">${getActionIcon(event.action, event.installMethod)}</span>
                     <span class="activity-user">${event.user}</span>
-                    <span class="activity-action">${event.action}</span>
+                    <span class="activity-action">${getActionLabel(event.action, event.installMethod)}${event.installMethod ? ` (${event.installMethod})` : ''}</span>
                     <span class="activity-time">${formatTimeAgo(event.timestamp)}</span>
                 </div>
             `).join('');

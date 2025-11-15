@@ -13,6 +13,18 @@ const GitHubAnalytics = require('../lib/simple-analytics');
 const packageJson = require('../package.json');
 const analytics = new GitHubAnalytics();
 
+// Detect and track npx usage
+if (process.env.NPX_CLI_JS || 
+    process.argv[0].includes('npx') ||
+    process.argv[1].includes('_npx') ||
+    process.env._?.includes('npx')) {
+    // Track npx usage asynchronously without blocking
+    analytics.trackNpxUsage({
+        command: process.argv.slice(2).join(' ') || 'help',
+        args: process.argv.slice(2)
+    }).catch(() => {}); // Silent fail
+}
+
 program
   .name('testgenie')
   .description('TestGenie CLI - Install GitHub Chatmodes, dependencies, and MCP configuration for VS Code')
@@ -29,8 +41,13 @@ program
     const startTime = Date.now();
     const targetPath = projectPath || process.cwd();
     
-    // Track installation start
-    await analytics.trackInstallStart(options);
+    // Track installation start with enhanced context
+    await analytics.trackInstallStart({
+        projectPath: targetPath,
+        command: 'install',
+        args: process.argv.slice(2),
+        ...options
+    });
     
     console.log(chalk.blue('\n🚀 TestGenie CLI\n'));
     
@@ -117,9 +134,14 @@ program
 
       spinner.succeed(chalk.green('TestGenie installation completed successfully!'));
       
-      // Track successful installation
+      // Track successful installation with more context
       const duration = Date.now() - startTime;
-      await analytics.trackInstallSuccess(options, duration);
+      await analytics.trackInstallSuccess({
+        projectPath: targetPath,
+        duration: duration,
+        command: 'install',
+        ...options
+      });
       
       console.log(chalk.yellow('\n📋 Next Steps:'));
       console.log('1. Open VS Code in your project directory');
