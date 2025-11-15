@@ -8,7 +8,7 @@ const path = require('path');
 const ora = require('ora');
 const os = require('os');
 const { execSync } = require('child_process');
-const GitHubAnalytics = require('../lib/github-analytics');
+const GitHubAnalytics = require('../lib/simple-analytics');
 
 const packageJson = require('../package.json');
 const analytics = new GitHubAnalytics();

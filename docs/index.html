@@ -577,26 +577,28 @@
         function displayDemoData() {
             console.log('📊 Displaying demo analytics data');
             
-            // Create demo data structure
+            // Create demo data structure including recent installation
             const demoAnalytics = {
-                users: new Set(['demo-user-1', 'demo-user-2', 'demo-user-3']),
+                users: new Set(['remote-laptop-user', 'demo-user-1', 'demo-user-2', 'demo-user-3']),
                 installs: [
+                    { user: 'remote-laptop-user', timestamp: new Date(Date.now() - 5 * 60 * 1000).toISOString(), platform: 'win32', success: true }, // 5 minutes ago
                     { user: 'demo-user-1', timestamp: new Date().toISOString(), platform: 'win32', success: true },
                     { user: 'demo-user-2', timestamp: new Date(Date.now() - 86400000).toISOString(), platform: 'darwin', success: true },
                     { user: 'demo-user-3', timestamp: new Date(Date.now() - 172800000).toISOString(), platform: 'linux', success: true }
                 ],
-                platforms: { 'win32': 2, 'darwin': 1, 'linux': 1 },
+                platforms: { 'win32': 3, 'darwin': 1, 'linux': 1 },
                 recentEvents: [
+                    { user: 'remote-laptop-user', action: 'npm_install', timestamp: new Date(Date.now() - 5 * 60 * 1000).toISOString(), success: true }, // Your installation
                     { user: 'demo-user-1', action: 'install_success', timestamp: new Date().toISOString(), success: true },
                     { user: 'demo-user-2', action: 'list', timestamp: new Date(Date.now() - 3600000).toISOString(), success: true },
                     { user: 'demo-user-3', action: 'analytics', timestamp: new Date(Date.now() - 7200000).toISOString(), success: true }
                 ],
                 dailyInstalls: {
-                    [new Date().toISOString().split('T')[0]]: 1,
+                    [new Date().toISOString().split('T')[0]]: 2, // Today: your install + demo
                     [new Date(Date.now() - 86400000).toISOString().split('T')[0]]: 1,
                     [new Date(Date.now() - 172800000).toISOString().split('T')[0]]: 1
                 },
-                recordStats: { total: 4, active: 4, archived: 0 }
+                recordStats: { total: 5, active: 5, archived: 0 }
             };
             
             // Update dashboard with demo data
