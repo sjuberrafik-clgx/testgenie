@@ -1,6 +1,6 @@
 {
   "name": "testgenie-cli",
-  "version": "1.3.2",
+  "version": "1.4.2",
   "description": "A CLI tool to install GitHub Chatmodes for VS Code projects - TestGenie, BugGenie, and ScriptGenerator",
   "main": "bin/cli.js",
   "bin": {
@@ -53,3 +53,8 @@
     "README.md"
   ]
 }
+
+
+
+
+
