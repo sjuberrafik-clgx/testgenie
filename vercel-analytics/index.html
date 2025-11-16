@@ -207,6 +207,7 @@
             flex-wrap: wrap;
             margin-top: 10px;
         }
+                }
         .platform-badge {
             background: #667eea;
             color: white;
@@ -214,6 +215,508 @@
             border-radius: 4px;
             font-size: 0.8rem;
         }
+        
+        .subtitle {
+            color: #a0a0a0;
+            font-size: 1.1rem;
+            font-weight: 400;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+        
+        .stat-card {
+            background: linear-gradient(145deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(148, 0, 211, 0.2);
+            border-radius: 16px;
+            padding: 2rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #9400d3, #4b0082);
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(148, 0, 211, 0.4);
+            box-shadow: 0 20px 40px rgba(148, 0, 211, 0.1);
+        }
+        
+        .stat-icon {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+        
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #9400d3;
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat-label {
+            color: #a0a0a0;
+            font-size: 0.9rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .events-section {
+            margin-top: 3rem;
+        }
+        
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid rgba(148, 0, 211, 0.2);
+        }
+        
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #ffffff;
+        }
+        
+        .pagination-controls {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+        
+        .pagination-btn {
+            background: linear-gradient(135deg, #9400d3, #4b0082);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+        
+        .pagination-btn:hover:not(:disabled) {
+            background: linear-gradient(135deg, #a020f0, #5b0092);
+            transform: translateY(-1px);
+        }
+        
+        .pagination-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .pagination-info {
+            color: #a0a0a0;
+            font-size: 0.9rem;
+            margin: 0 1rem;
+        }
+        
+        .events-container {
+            display: grid;
+            gap: 1rem;
+        }
+        
+        .event-card {
+            background: linear-gradient(145deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
+            border: 1px solid rgba(148, 0, 211, 0.15);
+            border-radius: 12px;
+            padding: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .event-card:hover {
+            border-color: rgba(148, 0, 211, 0.3);
+            background: linear-gradient(145deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));
+        }
+        
+        .event-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+        
+        .event-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #9400d3;
+            flex: 1;
+        }
+        
+        .event-timestamp {
+            color: #a0a0a0;
+            font-size: 0.85rem;
+            margin-left: 1rem;
+        }
+        
+        .event-summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            color: #c0c0c0;
+            font-size: 0.9rem;
+        }
+        
+        .event-details {
+            display: none;
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid rgba(148, 0, 211, 0.2);
+            animation: slideDown 0.3s ease;
+        }
+        
+        .event-details.visible {
+            display: block;
+        }
+        
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .details-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+        
+        .detail-section {
+            background: rgba(148, 0, 211, 0.05);
+            border-radius: 8px;
+            padding: 1.5rem;
+        }
+        
+        .detail-section h4 {
+            color: #9400d3;
+            margin-bottom: 1rem;
+            font-size: 1rem;
+            font-weight: 600;
+        }
+        
+        .detail-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .detail-item:last-child {
+            border-bottom: none;
+        }
+        
+        .detail-label {
+            color: #a0a0a0;
+            font-weight: 500;
+        }
+        
+        .detail-value {
+            color: #ffffff;
+            text-align: right;
+            max-width: 60%;
+            word-break: break-word;
+        }
+        
+        .loading {
+            text-align: center;
+            color: #a0a0a0;
+            font-size: 1.1rem;
+            margin: 3rem 0;
+        }
+        
+        .loading::after {
+            content: '...';
+            animation: dots 2s infinite;
+        }
+        
+        @keyframes dots {
+            0%, 20% { content: ''; }
+            40% { content: '.'; }
+            60% { content: '..'; }
+            80%, 100% { content: '...'; }
+        }
+        
+        .no-events {
+            text-align: center;
+            color: #a0a0a0;
+            font-size: 1.1rem;
+            margin: 3rem 0;
+            padding: 2rem;
+            border: 2px dashed rgba(148, 0, 211, 0.2);
+            border-radius: 12px;
+        }
+        
+        @media (max-width: 768px) {
+            .dashboard-container {
+                padding: 1rem;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+            
+            .genie-logo {
+                font-size: 3rem;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .section-header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: stretch;
+            }
+            
+            .pagination-controls {
+                justify-content: center;
+            }
+            
+            .event-header {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+            
+            .event-summary {
+                grid-template-columns: 1fr;
+            }
+            
+            .details-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <div class="header">
+            <span class="genie-logo">🧞‍♀️</span>
+            <h1>TestGenie Analytics</h1>
+            <p class="subtitle">Professional Analytics Dashboard</p>
+        </div>
+        
+        <div class="stats-grid" id="stats">
+            <div class="stat-card">
+                <span class="stat-icon">📊</span>
+                <div class="stat-number" id="totalEvents">0</div>
+                <div class="stat-label">Total Events</div>
+            </div>
+            
+            <div class="stat-card">
+                <span class="stat-icon">📅</span>
+                <div class="stat-number" id="todayEvents">0</div>
+                <div class="stat-label">Today's Events</div>
+            </div>
+            
+            <div class="stat-card">
+                <span class="stat-icon">👥</span>
+                <div class="stat-number" id="uniqueUsers">0</div>
+                <div class="stat-label">Unique Users</div>
+            </div>
+            
+            <div class="stat-card">
+                <span class="stat-icon">💻</span>
+                <div class="stat-number" id="platformCount">0</div>
+                <div class="stat-label">Platforms</div>
+            </div>
+        </div>
+        
+        <div class="events-section">
+            <div class="section-header">
+                <h2 class="section-title">🧞‍♀️ Recent Events</h2>
+                <div class="pagination-controls">
+                    <button class="pagination-btn" id="prevBtn" onclick="loadPreviousPage()" disabled>
+                        ← Previous
+                    </button>
+                    <span class="pagination-info" id="paginationInfo">Page 1</span>
+                    <button class="pagination-btn" id="nextBtn" onclick="loadNextPage()">
+                        Next →
+                    </button>
+                </div>
+            </div>
+            
+            <div class="events-container" id="events">
+                <div class="loading">Loading events</div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        let currentPage = 1;
+        let totalPages = 1;
+        
+        async function loadAnalytics(page = 1) {
+            try {
+                const response = await fetch(`/api/stats?page=${page}&limit=10`);
+                const data = await response.json();
+                
+                // Update stats
+                document.getElementById('totalEvents').textContent = data.totalEvents || 0;
+                document.getElementById('todayEvents').textContent = data.todayEvents || 0;
+                document.getElementById('uniqueUsers').textContent = data.uniqueUsers || 0;
+                document.getElementById('platformCount').textContent = data.platforms?.length || 0;
+                
+                // Update events
+                displayEvents(data.recentEvents || []);
+                
+                // Update pagination
+                if (data.pagination) {
+                    currentPage = data.pagination.currentPage;
+                    updatePaginationControls(data.pagination);
+                }
+                
+            } catch (error) {
+                console.error('Error loading analytics:', error);
+                document.getElementById('events').innerHTML = 
+                    '<div class="no-events">Error loading events. Please try again later.</div>';
+            }
+        }
+        
+        function displayEvents(events) {
+            const container = document.getElementById('events');
+            
+            if (events.length === 0) {
+                container.innerHTML = '<div class="no-events">🧞‍♀️ No events found. Install TestGenie CLI to see analytics!</div>';
+                return;
+            }
+            
+            container.innerHTML = events.map(event => {
+                const timestamp = new Date(event.timestamp).toLocaleString();
+                return `
+                    <div class="event-card" onclick="toggleEventDetails(this)">
+                        <div class="event-header">
+                            <div class="event-title">🧞‍♀️ ${event.event}</div>
+                            <div class="event-timestamp">${timestamp}</div>
+                        </div>
+                        
+                        <div class="event-summary">
+                            <div><strong>User:</strong> ${event.username || 'Unknown'}</div>
+                            <div><strong>Platform:</strong> ${event.platform || 'Unknown'}</div>
+                            <div><strong>Version:</strong> ${event.version || 'Unknown'}</div>
+                            <div><strong>Host:</strong> ${event.hostname || 'Unknown'}</div>
+                        </div>
+                        
+                        <div class="event-details">
+                            <div class="details-grid">
+                                <div class="detail-section">
+                                    <h4>🔍 Event Details</h4>
+                                    <div class="detail-item">
+                                        <span class="detail-label">Event Type:</span>
+                                        <span class="detail-value">${event.event}</span>
+                                    </div>
+                                    <div class="detail-item">
+                                        <span class="detail-label">Session ID:</span>
+                                        <span class="detail-value">${event.session_id || 'N/A'}</span>
+                                    </div>
+                                    <div class="detail-item">
+                                        <span class="detail-label">Domain:</span>
+                                        <span class="detail-value">${event.domain || 'N/A'}</span>
+                                    </div>
+                                    <div class="detail-item">
+                                        <span class="detail-label">Install Location:</span>
+                                        <span class="detail-value">${event.install_location || 'N/A'}</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="detail-section">
+                                    <h4>💻 System Information</h4>
+                                    <div class="detail-item">
+                                        <span class="detail-label">Username:</span>
+                                        <span class="detail-value">${event.username || 'N/A'}</span>
+                                    </div>
+                                    <div class="detail-item">
+                                        <span class="detail-label">Email:</span>
+                                        <span class="detail-value">${event.user_email || 'N/A'}</span>
+                                    </div>
+                                    <div class="detail-item">
+                                        <span class="detail-label">Hostname:</span>
+                                        <span class="detail-value">${event.hostname || 'N/A'}</span>
+                                    </div>
+                                    <div class="detail-item">
+                                        <span class="detail-label">Platform:</span>
+                                        <span class="detail-value">${event.platform || 'N/A'}</span>
+                                    </div>
+                                    <div class="detail-item">
+                                        <span class="detail-label">Architecture:</span>
+                                        <span class="detail-value">${event.arch || 'N/A'}</span>
+                                    </div>
+                                    <div class="detail-item">
+                                        <span class="detail-label">Node Version:</span>
+                                        <span class="detail-value">${event.node_version || 'N/A'}</span>
+                                    </div>
+                                    <div class="detail-item">
+                                        <span class="detail-label">CLI Version:</span>
+                                        <span class="detail-value">${event.version || 'N/A'}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        function toggleEventDetails(card) {
+            const details = card.querySelector('.event-details');
+            details.classList.toggle('visible');
+        }
+        
+        function updatePaginationControls(pagination) {
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            const paginationInfo = document.getElementById('paginationInfo');
+            
+            prevBtn.disabled = !pagination.hasPrevPage;
+            nextBtn.disabled = !pagination.hasNextPage;
+            
+            paginationInfo.textContent = `Page ${pagination.currentPage}`;
+        }
+        
+        function loadPreviousPage() {
+            if (currentPage > 1) {
+                loadAnalytics(currentPage - 1);
+            }
+        }
+        
+        function loadNextPage() {
+            loadAnalytics(currentPage + 1);
+        }
+        
+        // Load initial data
+        loadAnalytics();
+        
+        // Auto-refresh every 30 seconds
+        setInterval(() => loadAnalytics(currentPage), 30000);
+    </script>
+</body>
+</html>
     </style>
 </head>
 <body>
