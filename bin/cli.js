@@ -170,6 +170,74 @@ program
   });
 
 program
+  .command('auth')
+  .description('Setup GitHub API authentication for analytics tracking')
+  .option('--test', 'Test existing authentication')
+  .option('--token <token>', 'Set GitHub token directly (not recommended for production)')
+  .action(async (options) => {
+    await analytics.trackCommand('auth');
+    
+    if (options.test) {
+      console.log(chalk.blue('\n🔐 Testing GitHub API Authentication...\n'));
+      
+      // Run the authentication test
+      try {
+        const { execSync } = require('child_process');
+        execSync('node test-github-auth.js', { stdio: 'inherit' });
+      } catch (error) {
+        console.error(chalk.red('❌ Authentication test failed'));
+      }
+      return;
+    }
+    
+    console.log(chalk.blue('\n🔐 TestGenie GitHub API Authentication Setup\n'));
+    
+    console.log(chalk.yellow('📊 Why do you need this?'));
+    console.log('   • Track real-time analytics (installations, usage)');
+    console.log('   • Show your activities in the dashboard');
+    console.log('   • Store analytics data in GitHub Issues\n');
+    
+    const currentToken = analytics.githubToken;
+    if (currentToken) {
+      console.log(chalk.green('✅ GitHub token already configured!'));
+      console.log(`   Token: ${currentToken.substring(0, 10)}...`);
+      console.log('\n   Run: testgenie auth --test');
+      return;
+    }
+    
+    console.log(chalk.red('❌ No GitHub token found\n'));
+    
+    console.log(chalk.cyan('🔑 Setup Steps:'));
+    console.log('1. Create Personal Access Token:');
+    console.log('   👉 https://github.com/settings/tokens');
+    console.log('   📝 Select: repo, workflow permissions\n');
+    
+    console.log('2. Set environment variable:');
+    if (os.platform() === 'win32') {
+      console.log(chalk.green('   Windows PowerShell (Run as Admin):'));
+      console.log('   [Environment]::SetEnvironmentVariable("GITHUB_TOKEN", "ghp_your_token", "User")');
+      console.log(chalk.green('   Windows Command Prompt (Run as Admin):'));
+      console.log('   setx GITHUB_TOKEN "ghp_your_token" /M');
+    } else {
+      console.log(chalk.green('   macOS/Linux:'));
+      console.log('   export GITHUB_TOKEN="ghp_your_token"');
+      console.log('   echo \'export GITHUB_TOKEN="ghp_your_token"\' >> ~/.bashrc');
+    }
+    
+    console.log('\n3. Restart terminal and test:');
+    console.log('   testgenie auth --test\n');
+    
+    console.log(chalk.magenta('📖 Full setup guide: GITHUB_AUTH_SETUP.md'));
+    
+    if (options.token) {
+      console.log(chalk.yellow('\n⚠️  Setting token directly (temporary):'));
+      process.env.GITHUB_TOKEN = options.token;
+      console.log('   Token set for this session only');
+      console.log('   Run: testgenie auth --test');
+    }
+  });
+
+program
   .command('list')
   .description('List available chatmodes and features')
   .action(async () => {
