@@ -8,22 +8,27 @@ const path = require('path');
 const ora = require('ora');
 const os = require('os');
 const { execSync } = require('child_process');
-const GitHubAnalytics = require('../lib/simple-analytics');
+const Analytics = require('../lib/analytics');
 
 const packageJson = require('../package.json');
-const analytics = new GitHubAnalytics();
+const analytics = new Analytics();
 
-// Detect and track npx usage
-if (process.env.NPX_CLI_JS || 
-    process.argv[0].includes('npx') ||
-    process.argv[1].includes('_npx') ||
-    process.env._?.includes('npx')) {
-    // Track npx usage asynchronously without blocking
-    analytics.trackNpxUsage({
-        command: process.argv.slice(2).join(' ') || 'help',
-        args: process.argv.slice(2)
-    }).catch(() => {}); // Silent fail
-}
+// Initialize analytics and detect npx usage
+(async () => {
+    await analytics.initialize();
+    
+    // Track npx usage for analytics
+    if (process.env.NPX_CLI_JS || 
+        process.argv[0].includes('npx') ||
+        process.argv[1].includes('_npx') ||
+        process.env._?.includes('npx')) {
+        
+        await analytics.track('npx_usage', {
+            command: process.argv.slice(2).join(' ') || 'help',
+            args: process.argv.slice(2)
+        });
+    }
+})().catch(() => {}); // Silent fail
 
 program
   .name('testgenie')
@@ -37,12 +42,14 @@ program
   .option('-f, --force', 'Force overwrite existing chatmodes')
   .option('--no-deps', 'Skip dependency installation')
   .option('--no-mcp', 'Skip MCP configuration setup')
+  .option('-p, --profile <profile>', 'VS Code profile name for MCP configuration (e.g., "1a6e6ee" or "default")')
+  .option('--help-profiles', 'Show information about VS Code profiles')
   .action(async (projectPath, options) => {
     const startTime = Date.now();
     const targetPath = projectPath || process.cwd();
     
-    // Track installation start with enhanced context
-    await analytics.trackInstallStart({
+    // Track installation start
+    await analytics.track('install_start', {
         projectPath: targetPath,
         command: 'install',
         args: process.argv.slice(2),
@@ -54,7 +61,7 @@ program
     // Check if target directory exists
     if (!fs.existsSync(targetPath)) {
       const error = new Error(`Directory ${targetPath} does not exist`);
-      await analytics.trackInstallError(error, options);
+      await analytics.track('install_error', { error: error.message, ...options });
       console.error(chalk.red(`Error: ${error.message}`));
       process.exit(1);
     }
@@ -128,7 +135,7 @@ program
         // Setup MCP if requested
         if (answers.setupMcp) {
           spinner.text = 'Setting up MCP configuration...';
-          await setupMcpConfiguration(sourceDir, answers.overwrite);
+          await setupMcpConfiguration(sourceDir, answers.overwrite, options.profile);
         }
       }
 
@@ -136,7 +143,7 @@ program
       
       // Track successful installation with more context
       const duration = Date.now() - startTime;
-      await analytics.trackInstallSuccess({
+      await analytics.track('install_success', {
         projectPath: targetPath,
         duration: duration,
         command: 'install',
@@ -163,7 +170,7 @@ program
       
     } catch (error) {
       spinner.fail(chalk.red('Failed to install TestGenie'));
-      await analytics.trackInstallError(error, options);
+      await analytics.track('install_error', { error: error.message, ...options });
       console.error(chalk.red(error.message));
       process.exit(1);
     }
@@ -175,7 +182,7 @@ program
   .option('--test', 'Test existing authentication')
   .option('--token <token>', 'Set GitHub token directly (not recommended for production)')
   .action(async (options) => {
-    await analytics.trackCommand('auth');
+    await analytics.track('command', { command: 'auth' });
     
     if (options.test) {
       console.log(chalk.blue('\n🔐 Testing GitHub API Authentication...\n'));
@@ -241,7 +248,7 @@ program
   .command('list')
   .description('List available chatmodes and features')
   .action(async () => {
-    await analytics.trackCommand('list');
+    await analytics.track('command', { command: 'list' });
     
     console.log(chalk.blue('\n📋 TestGenie CLI Features:\n'));
     
@@ -284,7 +291,7 @@ program
   .command('update')
   .description('Update existing chatmodes to latest version')
   .action(async () => {
-    await analytics.trackCommand('update');
+    await analytics.track('command', { command: 'update' });
     
     const spinner = ora('Checking for updates...').start();
     
@@ -297,7 +304,7 @@ program
   .description('Open TestGenie Analytics Dashboard')
   .option('--url', 'Show analytics dashboard URL')
   .action(async (options) => {
-    await analytics.trackCommand('analytics');
+    await analytics.track('command', { command: 'analytics' });
     
     const dashboardUrl = 'https://sjuberrafik-clgx.github.io/testgenie';
     
@@ -327,6 +334,63 @@ program
     }
   });
 
+program
+  .command('mcp')
+  .description('Setup MCP (Model Context Protocol) configuration for VS Code')
+  .option('-p, --profile <profile>', 'VS Code profile name (e.g., "1a6e6ee" or "default")')
+  .option('-f, --force', 'Overwrite existing MCP configuration')
+  .option('--list-profiles', 'List available VS Code profiles')
+  .action(async (options) => {
+    await analytics.track('command', { command: 'mcp' });
+    
+    if (options.listProfiles) {
+      console.log(chalk.blue('\n📂 Available VS Code Profiles:\n'));
+      
+      const baseUserPath = path.join(os.homedir(), 'AppData', 'Roaming', 'Code', 'User');
+      const profilesDir = path.join(baseUserPath, 'profiles');
+      
+      console.log(chalk.green('📁 Default') + chalk.gray(' - Standard VS Code user directory'));
+      console.log(chalk.gray(`   Path: ${baseUserPath}`));
+      
+      if (fs.existsSync(profilesDir)) {
+        const profiles = fs.readdirSync(profilesDir).filter(item => {
+          const profilePath = path.join(profilesDir, item);
+          return fs.statSync(profilePath).isDirectory();
+        });
+        
+        if (profiles.length > 0) {
+          profiles.forEach(profile => {
+            const profilePath = path.join(profilesDir, profile);
+            console.log(chalk.green(`📁 ${profile}`) + chalk.gray(' - Custom profile'));
+            console.log(chalk.gray(`   Path: ${profilePath}`));
+          });
+        } else {
+          console.log(chalk.gray('   No custom profiles found.'));
+        }
+      } else {
+        console.log(chalk.gray('   No profiles directory found.'));
+      }
+      return;
+    }
+    
+    console.log(chalk.blue('\n⚙️  Setting up MCP Configuration...\n'));
+    
+    try {
+      const sourceDir = path.join(__dirname, '..');
+      await setupMcpConfiguration(sourceDir, options.force, options.profile);
+      
+      console.log(chalk.green('\n✅ MCP Configuration completed successfully!'));
+      console.log(chalk.yellow('\n📝 Next Steps:'));
+      console.log('1. Restart VS Code to load the new MCP configuration');
+      console.log('2. Update your Atlassian credentials in the MCP config file');
+      console.log('3. Open GitHub Copilot Chat and test the Atlassian integration\n');
+      
+    } catch (error) {
+      console.error(chalk.red(`❌ MCP setup failed: ${error.message}`));
+      process.exit(1);
+    }
+  });
+
 async function installProjectDependencies(projectPath, force = false) {
   const packageJsonPath = path.join(projectPath, 'package.json');
   const templatePackageJsonPath = path.join(__dirname, '../templates/project-package.json');
@@ -341,7 +405,7 @@ async function installProjectDependencies(projectPath, force = false) {
     packageJson = {
       "name": path.basename(projectPath),
       "version": "1.0.0",
-      "description": "Project with TestGenie chatmodes"
+      "description": `Project with TestGenie chatmodes - Created by TestGenie CLI v${require('../package.json').version}`
     };
   }
   
@@ -378,8 +442,141 @@ async function installProjectDependencies(projectPath, force = false) {
   }
 }
 
-async function setupMcpConfiguration(sourceDir, force = false) {
-  const userDataPath = path.join(os.homedir(), 'AppData', 'Roaming', 'Code', 'User');
+async function getVSCodeProfilePath(specifiedProfile = null) {
+  const baseUserPath = path.join(os.homedir(), 'AppData', 'Roaming', 'Code', 'User');
+  
+  // Check for active profile from argv.json or other VS Code profile indicators
+  const profilesDir = path.join(os.homedir(), 'AppData', 'Roaming', 'Code', 'User', 'profiles');
+  
+  try {
+    // Method 0: Use specified profile if provided
+    if (specifiedProfile) {
+      if (specifiedProfile === 'default') {
+        console.log(chalk.blue(`📁 Using specified default VS Code user directory`));
+        return baseUserPath;
+      }
+      
+      const specifiedPath = path.join(profilesDir, specifiedProfile);
+      if (fs.existsSync(specifiedPath)) {
+        console.log(chalk.blue(`📁 Using specified profile: ${specifiedProfile}`));
+        return specifiedPath;
+      } else {
+        console.log(chalk.yellow(`⚠️  Specified profile "${specifiedProfile}" not found, detecting automatically...`));
+      }
+    }
+    // Method 1: Check for argv.json which might contain profile info
+    const argvPath = path.join(os.homedir(), 'AppData', 'Roaming', 'Code', 'argv.json');
+    if (fs.existsSync(argvPath)) {
+      const argv = await fs.readJson(argvPath);
+      if (argv.profile && argv.profile !== 'default') {
+        const profilePath = path.join(profilesDir, argv.profile);
+        if (fs.existsSync(profilePath)) {
+          console.log(chalk.blue(`📁 Detected VS Code profile: ${argv.profile}`));
+          return profilePath;
+        }
+      }
+    }
+    
+    // Method 2: Check for recently used profiles in workspaceStorage
+    const workspaceStorageDir = path.join(baseUserPath, 'workspaceStorage');
+    if (fs.existsSync(workspaceStorageDir)) {
+      try {
+        // Look for profile indicators in workspace storage
+        const workspaceFolders = fs.readdirSync(workspaceStorageDir);
+        for (const folder of workspaceFolders) {
+          const profileStoragePath = path.join(workspaceStorageDir, folder, 'workspace.json');
+          if (fs.existsSync(profileStoragePath)) {
+            const workspaceData = await fs.readJson(profileStoragePath);
+            if (workspaceData.profile && workspaceData.profile !== 'default') {
+              const profilePath = path.join(profilesDir, workspaceData.profile);
+              if (fs.existsSync(profilePath)) {
+                console.log(chalk.blue(`📁 Found workspace profile: ${workspaceData.profile}`));
+                return profilePath;
+              }
+            }
+          }
+        }
+      } catch (error) {
+        // Continue to next method
+      }
+    }
+    
+    // Method 3: Check global state for active profile
+    const globalStateDir = path.join(baseUserPath, 'globalStorage');
+    if (fs.existsSync(globalStateDir)) {
+      try {
+        const stateFiles = fs.readdirSync(globalStateDir);
+        for (const stateFile of stateFiles) {
+          if (stateFile.includes('state.vscdb') || stateFile.includes('state.json')) {
+            // VS Code often stores active profile info in state files
+            // This is a simplified check - in reality, VS Code uses SQLite
+            continue;
+          }
+        }
+      } catch (error) {
+        // Continue to next method
+      }
+    }
+    
+    // Method 4: Check for existing profiles and let user choose
+    if (fs.existsSync(profilesDir)) {
+      const profiles = fs.readdirSync(profilesDir).filter(item => {
+        const profilePath = path.join(profilesDir, item);
+        return fs.statSync(profilePath).isDirectory();
+      });
+      
+      if (profiles.length > 0) {
+        console.log(chalk.yellow(`\n📂 Found VS Code profiles:`));
+        
+        // Create choices for inquirer
+        const choices = [
+          { name: '📁 Default (Standard VS Code)', value: 'default' },
+          ...profiles.map(profile => ({ 
+            name: `📁 Profile: ${profile}`, 
+            value: profile 
+          }))
+        ];
+        
+        try {
+          const answer = await inquirer.prompt([{
+            type: 'list',
+            name: 'selectedProfile',
+            message: 'Which VS Code profile should we install MCP configuration for?',
+            choices: choices,
+            default: profiles[0]
+          }]);
+          
+          if (answer.selectedProfile === 'default') {
+            console.log(chalk.blue(`📁 Using default VS Code user directory`));
+            return baseUserPath;
+          } else {
+            const profilePath = path.join(profilesDir, answer.selectedProfile);
+            console.log(chalk.blue(`📁 Using profile: ${answer.selectedProfile}`));
+            return profilePath;
+          }
+          
+        } catch (error) {
+          // If inquirer fails (non-interactive), use first profile
+          const firstProfile = profiles[0];
+          const profilePath = path.join(profilesDir, firstProfile);
+          console.log(chalk.blue(`📁 Non-interactive mode, using profile: ${firstProfile}`));
+          return profilePath;
+        }
+      }
+    }
+    
+    // Method 5: Fallback to default user directory
+    console.log(chalk.gray(`📁 Using default VS Code user directory`));
+    return baseUserPath;
+    
+  } catch (error) {
+    console.log(chalk.gray(`📁 Profile detection failed, using default: ${error.message}`));
+    return baseUserPath;
+  }
+}
+
+async function setupMcpConfiguration(sourceDir, force = false, profile = null) {
+  const userDataPath = await getVSCodeProfilePath(profile);
   const mcpConfigPath = path.join(userDataPath, 'mcp.json');
   
   // Try multiple possible locations for mcp.json template

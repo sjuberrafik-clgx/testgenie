@@ -1,42 +1,463 @@
 ﻿<!DOCTYPE html>
 <html>
 <head>
-    <title>TestGenie Analytics</title>
+    <title>TestGenie Analytics - Professional Dashboard</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: Arial; background: #0f0f0f; color: white; margin: 0; padding: 20px; }
-        .header { text-align: center; margin-bottom: 30px; }
-        h1 { color: #667eea; font-size: 2.5rem; }
-        .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; }
-        .stat-card { background: #1a1a1a; padding: 20px; border-radius: 8px; border: 1px solid #333; }
-        .stat-value { font-size: 2rem; color: #667eea; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body { 
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%);
+            color: #ffffff;
+            line-height: 1.6;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        .dashboard-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+            position: relative;
+        }
+        
+        .genie-logo {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            display: block;
+            filter: drop-shadow(0 4px 8px rgba(148, 0, 211, 0.3));
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #9400d3, #4b0082, #6a5acd);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+        }
+        
+        .subtitle {
+            color: #a0a0a0;
+            font-size: 1.1rem;
+            font-weight: 400;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+        
+        .stat-card {
+            background: linear-gradient(145deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(148, 0, 211, 0.2);
+            border-radius: 16px;
+            padding: 2rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #9400d3, #4b0082);
+        }
+        
+                .stat-card:hover {\n            transform: translateY(-5px);\n            border-color: rgba(148, 0, 211, 0.4);\n            box-shadow: 0 20px 40px rgba(148, 0, 211, 0.1);\n        }\n        \n        .stat-icon {\n            font-size: 2rem;\n            margin-bottom: 1rem;\n            display: block;\n        }\n        \n        .stat-number {\n            font-size: 2.5rem;\n            font-weight: 700;\n            color: #9400d3;\n            margin-bottom: 0.5rem;\n        }\n        \n        .stat-label {\n            color: #a0a0a0;\n            font-size: 0.9rem;\n            font-weight: 500;\n            text-transform: uppercase;\n            letter-spacing: 0.5px;\n        }\n        \n        .events-section {\n            margin-top: 3rem;\n        }\n        \n        .section-header {\n            display: flex;\n            justify-content: space-between;\n            align-items: center;\n            margin-bottom: 2rem;\n            padding-bottom: 1rem;\n            border-bottom: 2px solid rgba(148, 0, 211, 0.2);\n        }\n        \n        .section-title {\n            font-size: 1.5rem;\n            font-weight: 600;\n            color: #ffffff;\n        }\n        \n        .pagination-controls {\n            display: flex;\n            gap: 0.5rem;\n            align-items: center;\n        }\n        \n        .pagination-btn {\n            background: linear-gradient(135deg, #9400d3, #4b0082);\n            color: white;\n            border: none;\n            padding: 0.5rem 1rem;\n            border-radius: 8px;\n            cursor: pointer;\n            font-size: 0.9rem;\n            transition: all 0.3s ease;\n        }\n        \n        .pagination-btn:hover:not(:disabled) {\n            background: linear-gradient(135deg, #a020f0, #5b0092);\n            transform: translateY(-1px);\n        }\n        \n        .pagination-btn:disabled {\n            opacity: 0.5;\n            cursor: not-allowed;\n        }\n        \n        .pagination-info {\n            color: #a0a0a0;\n            font-size: 0.9rem;\n            margin: 0 1rem;\n        }\n        \n        .events-container {\n            display: grid;\n            gap: 1rem;\n        }\n        \n        .event-card {\n            background: linear-gradient(145deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));\n            border: 1px solid rgba(148, 0, 211, 0.15);\n            border-radius: 12px;\n            padding: 1.5rem;\n            cursor: pointer;\n            transition: all 0.3s ease;\n            position: relative;\n        }\n        \n        .event-card:hover {\n            border-color: rgba(148, 0, 211, 0.3);\n            background: linear-gradient(145deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));\n        }\n        \n        .event-header {\n            display: flex;\n            justify-content: between;\n            align-items: flex-start;\n            margin-bottom: 1rem;\n        }\n        \n        .event-title {\n            font-size: 1.1rem;\n            font-weight: 600;\n            color: #9400d3;\n            flex: 1;\n        }\n        \n        .event-timestamp {\n            color: #a0a0a0;\n            font-size: 0.85rem;\n            margin-left: 1rem;\n        }\n        \n        .event-summary {\n            display: grid;\n            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));\n            gap: 1rem;\n            color: #c0c0c0;\n            font-size: 0.9rem;\n        }\n        \n        .event-details {\n            display: none;\n            margin-top: 1.5rem;\n            padding-top: 1.5rem;\n            border-top: 1px solid rgba(148, 0, 211, 0.2);\n            animation: slideDown 0.3s ease;\n        }\n        \n        .event-details.visible {\n            display: block;\n        }\n        \n        @keyframes slideDown {\n            from {\n                opacity: 0;\n                transform: translateY(-10px);\n            }\n            to {\n                opacity: 1;\n                transform: translateY(0);\n            }\n        }\n        \n        .details-grid {\n            display: grid;\n            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));\n            gap: 2rem;\n        }\n        \n        .detail-section {\n            background: rgba(148, 0, 211, 0.05);\n            border-radius: 8px;\n            padding: 1.5rem;\n        }\n        \n        .detail-section h4 {\n            color: #9400d3;\n            margin-bottom: 1rem;\n            font-size: 1rem;\n            font-weight: 600;\n        }\n        \n        .detail-item {\n            display: flex;\n            justify-content: space-between;\n            padding: 0.5rem 0;\n            border-bottom: 1px solid rgba(255,255,255,0.1);\n        }\n        \n        .detail-item:last-child {\n            border-bottom: none;\n        }\n        \n        .detail-label {\n            color: #a0a0a0;\n            font-weight: 500;\n        }\n        \n        .detail-value {\n            color: #ffffff;\n            text-align: right;\n            max-width: 60%;\n            word-break: break-word;\n        }\n        \n        .loading {\n            text-align: center;\n            color: #a0a0a0;\n            font-size: 1.1rem;\n            margin: 3rem 0;\n        }\n        \n        .loading::after {\n            content: '...';\n            animation: dots 2s infinite;\n        }\n        \n        @keyframes dots {\n            0%, 20% { content: ''; }\n            40% { content: '.'; }\n            60% { content: '..'; }\n            80%, 100% { content: '...'; }\n        }\n        \n        .no-events {\n            text-align: center;\n            color: #a0a0a0;\n            font-size: 1.1rem;\n            margin: 3rem 0;\n            padding: 2rem;\n            border: 2px dashed rgba(148, 0, 211, 0.2);\n            border-radius: 12px;\n        }\n        \n        @media (max-width: 768px) {\n            .dashboard-container {\n                padding: 1rem;\n            }\n            \n            .stats-grid {\n                grid-template-columns: 1fr;\n                gap: 1rem;\n            }\n            \n            .genie-logo {\n                font-size: 3rem;\n            }\n            \n            h1 {\n                font-size: 2rem;\n            }\n            \n            .section-header {\n                flex-direction: column;\n                gap: 1rem;\n                align-items: stretch;\n            }\n            \n            .pagination-controls {\n                justify-content: center;\n            }\n            \n            .event-header {\n                flex-direction: column;\n                gap: 0.5rem;\n            }\n            \n            .event-summary {\n                grid-template-columns: 1fr;\n            }\n            \n            .details-grid {\n                grid-template-columns: 1fr;\n            }\n        }\n    </style>\n</head>\n<body>\n    <div class=\"dashboard-container\">\n        <div class=\"header\">\n            <span class=\"genie-logo\">🧞‍♀️</span>\n            <h1>TestGenie Analytics</h1>\n            <p class=\"subtitle\">Professional Analytics Dashboard</p>\n        </div>\n        \n        <div class=\"stats-grid\" id=\"stats\">\n            <div class=\"stat-card\">\n                <span class=\"stat-icon\">📊</span>\n                <div class=\"stat-number\" id=\"totalEvents\">0</div>\n                <div class=\"stat-label\">Total Events</div>\n            </div>\n            \n            <div class=\"stat-card\">\n                <span class=\"stat-icon\">📅</span>\n                <div class=\"stat-number\" id=\"todayEvents\">0</div>\n                <div class=\"stat-label\">Today's Events</div>\n            </div>\n            \n            <div class=\"stat-card\">\n                <span class=\"stat-icon\">👥</span>\n                <div class=\"stat-number\" id=\"uniqueUsers\">0</div>\n                <div class=\"stat-label\">Unique Users</div>\n            </div>\n            \n            <div class=\"stat-card\">\n                <span class=\"stat-icon\">💻</span>\n                <div class=\"stat-number\" id=\"platformCount\">0</div>\n                <div class=\"stat-label\">Platforms</div>\n            </div>\n        </div>\n        \n        <div class=\"events-section\">\n            <div class=\"section-header\">\n                <h2 class=\"section-title\">🧞‍♀️ Recent Events</h2>\n                <div class=\"pagination-controls\">\n                    <button class=\"pagination-btn\" id=\"prevBtn\" onclick=\"loadPreviousPage()\" disabled>\n                        ← Previous\n                    </button>\n                    <span class=\"pagination-info\" id=\"paginationInfo\">Page 1</span>\n                    <button class=\"pagination-btn\" id=\"nextBtn\" onclick=\"loadNextPage()\">\n                        Next →\n                    </button>\n                </div>\n            </div>\n            \n            <div class=\"events-container\" id=\"events\">\n                <div class=\"loading\">Loading events</div>\n            </div>\n        </div>\n    </div>\n    \n    <script>\n        let currentPage = 1;\n        let totalPages = 1;\n        \n        async function loadAnalytics(page = 1) {\n            try {\n                const response = await fetch(`/api/stats?page=${page}&limit=10`);\n                const data = await response.json();\n                \n                // Update stats\n                document.getElementById('totalEvents').textContent = data.totalEvents || 0;\n                document.getElementById('todayEvents').textContent = data.todayEvents || 0;\n                document.getElementById('uniqueUsers').textContent = data.uniqueUsers || 0;\n                document.getElementById('platformCount').textContent = data.platforms?.length || 0;\n                \n                // Update events\n                displayEvents(data.recentEvents || []);\n                \n                // Update pagination\n                if (data.pagination) {\n                    currentPage = data.pagination.currentPage;\n                    updatePaginationControls(data.pagination);\n                }\n                \n            } catch (error) {\n                console.error('Error loading analytics:', error);\n                document.getElementById('events').innerHTML = \n                    '<div class=\"no-events\">Error loading events. Please try again later.</div>';\n            }\n        }\n        \n        function displayEvents(events) {\n            const container = document.getElementById('events');\n            \n            if (events.length === 0) {\n                container.innerHTML = '<div class=\"no-events\">🧞‍♀️ No events found. Install TestGenie CLI to see analytics!</div>';\n                return;\n            }\n            \n            container.innerHTML = events.map(event => {\n                const timestamp = new Date(event.timestamp).toLocaleString();\n                return `\n                    <div class=\"event-card\" onclick=\"toggleEventDetails(this)\">\n                        <div class=\"event-header\">\n                            <div class=\"event-title\">🧞‍♀️ ${event.event}</div>\n                            <div class=\"event-timestamp\">${timestamp}</div>\n                        </div>\n                        \n                        <div class=\"event-summary\">\n                            <div><strong>User:</strong> ${event.username || 'Unknown'}</div>\n                            <div><strong>Platform:</strong> ${event.platform || 'Unknown'}</div>\n                            <div><strong>Version:</strong> ${event.version || 'Unknown'}</div>\n                            <div><strong>Host:</strong> ${event.hostname || 'Unknown'}</div>\n                        </div>\n                        \n                        <div class=\"event-details\">\n                            <div class=\"details-grid\">\n                                <div class=\"detail-section\">\n                                    <h4>🔍 Event Details</h4>\n                                    <div class=\"detail-item\">\n                                        <span class=\"detail-label\">Event Type:</span>\n                                        <span class=\"detail-value\">${event.event}</span>\n                                    </div>\n                                    <div class=\"detail-item\">\n                                        <span class=\"detail-label\">Session ID:</span>\n                                        <span class=\"detail-value\">${event.session_id || 'N/A'}</span>\n                                    </div>\n                                    <div class=\"detail-item\">\n                                        <span class=\"detail-label\">Domain:</span>\n                                        <span class=\"detail-value\">${event.domain || 'N/A'}</span>\n                                    </div>\n                                    <div class=\"detail-item\">\n                                        <span class=\"detail-label\">Install Location:</span>\n                                        <span class=\"detail-value\">${event.install_location || 'N/A'}</span>\n                                    </div>\n                                </div>\n                                \n                                <div class=\"detail-section\">\n                                    <h4>💻 System Information</h4>\n                                    <div class=\"detail-item\">\n                                        <span class=\"detail-label\">Username:</span>\n                                        <span class=\"detail-value\">${event.username || 'N/A'}</span>\n                                    </div>\n                                    <div class=\"detail-item\">\n                                        <span class=\"detail-label\">Email:</span>\n                                        <span class=\"detail-value\">${event.user_email || 'N/A'}</span>\n                                    </div>\n                                    <div class=\"detail-item\">\n                                        <span class=\"detail-label\">Hostname:</span>\n                                        <span class=\"detail-value\">${event.hostname || 'N/A'}</span>\n                                    </div>\n                                    <div class=\"detail-item\">\n                                        <span class=\"detail-label\">Platform:</span>\n                                        <span class=\"detail-value\">${event.platform || 'N/A'}</span>\n                                    </div>\n                                    <div class=\"detail-item\">\n                                        <span class=\"detail-label\">Architecture:</span>\n                                        <span class=\"detail-value\">${event.arch || 'N/A'}</span>\n                                    </div>\n                                    <div class=\"detail-item\">\n                                        <span class=\"detail-label\">Node Version:</span>\n                                        <span class=\"detail-value\">${event.node_version || 'N/A'}</span>\n                                    </div>\n                                    <div class=\"detail-item\">\n                                        <span class=\"detail-label\">CLI Version:</span>\n                                        <span class=\"detail-value\">${event.version || 'N/A'}</span>\n                                    </div>\n                                </div>\n                            </div>\n                        </div>\n                    </div>\n                `;\n            }).join('');\n        }\n        \n        function toggleEventDetails(card) {\n            const details = card.querySelector('.event-details');\n            details.classList.toggle('visible');\n        }\n        \n        function updatePaginationControls(pagination) {\n            const prevBtn = document.getElementById('prevBtn');\n            const nextBtn = document.getElementById('nextBtn');\n            const paginationInfo = document.getElementById('paginationInfo');\n            \n            prevBtn.disabled = !pagination.hasPrevPage;\n            nextBtn.disabled = !pagination.hasNextPage;\n            \n            paginationInfo.textContent = `Page ${pagination.currentPage}`;\n        }\n        \n        function loadPreviousPage() {\n            if (currentPage > 1) {\n                loadAnalytics(currentPage - 1);\n            }\n        }\n        \n        function loadNextPage() {\n            loadAnalytics(currentPage + 1);\n        }\n        \n        // Load initial data\n        loadAnalytics();\n        \n        // Auto-refresh every 30 seconds\n        setInterval(() => loadAnalytics(currentPage), 30000);\n    </script>\n</body>\n</html>
+        .stat-value { 
+            font-size: 2.5rem; 
+            color: #667eea;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        .stat-label {
+            color: #a0a0a0;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .recent-events {
+            background: linear-gradient(145deg, #1a1a1a, #2d2d2d);
+            padding: 25px;
+            border-radius: 12px;
+            border: 1px solid #333;
+            margin-top: 20px;
+        }
+        .event-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            border-bottom: 1px solid #333;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+        .event-item:hover {
+            background-color: rgba(102, 126, 234, 0.1);
+        }
+        .event-item:last-child {
+            border-bottom: none;
+        }
+        .event-info {
+            flex: 1;
+        }
+        .event-type {
+            color: #667eea;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .event-user {
+            color: #a0a0a0;
+            font-size: 0.9rem;
+            margin-bottom: 3px;
+        }
+        .event-details {
+            color: #888;
+            font-size: 0.8rem;
+        }
+        .event-time {
+            color: #666;
+            font-size: 0.8rem;
+        }
+        .event-expanded {
+            display: none;
+            margin-top: 15px;
+            padding: 15px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 8px;
+            border-left: 3px solid #667eea;
+        }
+        .event-expanded.show {
+            display: block;
+        }
+        .detail-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        .detail-item {
+            background: rgba(255,255,255,0.05);
+            padding: 10px;
+            border-radius: 6px;
+        }
+        .detail-label {
+            color: #667eea;
+            font-size: 0.8rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+        .detail-value {
+            color: #fff;
+            font-size: 0.9rem;
+            word-break: break-all;
+        }
+        .status-indicator {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 10px 15px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            z-index: 1000;
+        }
+        .status-live {
+            background: #28a745;
+            color: white;
+        }
+        .status-error {
+            background: #dc3545;
+            color: white;
+        }
+        .loading {
+            opacity: 0.6;
+            animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse {
+            0% { opacity: 0.6; }
+            50% { opacity: 1; }
+            100% { opacity: 0.6; }
+        }
+        .platforms {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 10px;
+        }
+        .platform-badge {
+            background: #667eea;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+        }
     </style>
 </head>
 <body>
     <div class="header">
-        <h1> TestGenie Analytics</h1>
-        <p>Real-time insights into TestGenie CLI usage</p>
+        <h1>🚀 TestGenie Analytics</h1>
+        <p class="subtitle">Real-time insights into TestGenie CLI usage</p>
+        <p style="color: #666; font-size: 0.8rem;">Updates every 10 seconds</p>
     </div>
+    
     <div class="stats">
         <div class="stat-card">
             <h3>Total Events</h3>
-            <div class="stat-value">42</div>
-            <p>All installations</p>
+            <div class="stat-value" id="totalEvents">-</div>
+            <p class="stat-label">All installations & commands</p>
         </div>
         <div class="stat-card">
             <h3>Today</h3>
-            <div class="stat-value">8</div>
-            <p>Events today</p>
+            <div class="stat-value" id="todayEvents">-</div>
+            <p class="stat-label">Events today</p>
+        </div>
+        <div class="stat-card">
+            <h3>Unique Users</h3>
+            <div class="stat-value" id="uniqueUsers">-</div>
+            <p class="stat-label">Different users</p>
         </div>
         <div class="stat-card">
             <h3>Platforms</h3>
-            <div class="stat-value">3</div>
-            <p>Windows, Mac, Linux</p>
-        </div>
-        <div class="stat-card">
-            <h3>Active</h3>
-            <div class="stat-value">Live</div>
-            <p>Dashboard running</p>
+            <div class="stat-value" id="platformCount">-</div>
+            <div class="platforms" id="platformList"></div>
         </div>
     </div>
+    
+    <div class="recent-events">
+        <h3>📊 Recent Activity <span style="font-size: 0.8rem; color: #888; font-weight: normal;">(Click to expand details)</span></h3>
+        <div id="recentEvents">
+            <div class="event-item">
+                <div class="event-info">
+                    <div class="event-type">Loading...</div>
+                    <div class="event-user">Fetching recent events...</div>
+                </div>
+                <div class="event-time">-</div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="status-indicator status-error" id="status">
+        🔄 Connecting...
+    </div>
+
+    <script>
+        let isLive = false;
+        let refreshInterval;
+
+        async function fetchStats() {
+            try {
+                const response = await fetch('/api/stats');
+                if (!response.ok) throw new Error('Failed to fetch');
+                
+                const data = await response.json();
+                updateDashboard(data);
+                setStatus('live');
+                
+            } catch (error) {
+                console.error('Failed to fetch stats:', error);
+                setStatus('error');
+            }
+        }
+
+        function updateDashboard(data) {
+            // Update stats
+            document.getElementById('totalEvents').textContent = data.totalEvents || 0;
+            document.getElementById('todayEvents').textContent = data.todayEvents || 0;
+            document.getElementById('uniqueUsers').textContent = data.uniqueUsers || 0;
+            document.getElementById('platformCount').textContent = data.platforms?.length || 0;
+
+            // Update platforms
+            const platformList = document.getElementById('platformList');
+            platformList.innerHTML = '';
+            if (data.platforms && data.platforms.length > 0) {
+                data.platforms.forEach(platform => {
+                    const badge = document.createElement('div');
+                    badge.className = 'platform-badge';
+                    badge.textContent = platform;
+                    platformList.appendChild(badge);
+                });
+            }
+
+            // Update recent events
+            const recentEvents = document.getElementById('recentEvents');
+            recentEvents.innerHTML = '';
+            
+            if (data.recentEvents && data.recentEvents.length > 0) {
+                data.recentEvents.forEach((event, index) => {
+                    const eventItem = document.createElement('div');
+                    eventItem.className = 'event-item';
+                    eventItem.onclick = () => toggleEventDetails(`event-${index}`);
+                    
+                    const eventTime = new Date(event.timestamp);
+                    const timeAgo = getTimeAgo(eventTime);
+                    
+                    // Create unique event ID for display
+                    const eventId = `${event.event}-${new Date(event.timestamp).getTime()}-${event.sessionId?.substring(0, 8) || 'unknown'}`;
+                    
+                    eventItem.innerHTML = `
+                        <div class="event-info">
+                            <div class="event-type">${event.event.replace(/_/g, ' ').toUpperCase()}</div>
+                            <div class="event-user">${event.username || 'Unknown'} • ${event.platform || 'Unknown'}</div>
+                            <div class="event-details">${event.hostname || 'Unknown'} • ${event.userEmail || 'No email'}</div>
+                        </div>
+                        <div class="event-time">${timeAgo}</div>
+                    `;
+                    
+                    // Add expanded details section
+                    const expandedDetails = document.createElement('div');
+                    expandedDetails.className = 'event-expanded';
+                    expandedDetails.id = `event-${index}`;
+                    expandedDetails.innerHTML = `
+                        <h4 style="color: #667eea; margin: 0 0 15px 0;">📊 Event Details</h4>
+                        <div class="detail-grid">
+                            <div class="detail-item">
+                                <div class="detail-label">User</div>
+                                <div class="detail-value">${event.username || 'Unknown'}</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Email</div>
+                                <div class="detail-value">${event.userEmail || 'Unknown'}</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Hostname</div>
+                                <div class="detail-value">${event.hostname || 'Unknown'}</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Action</div>
+                                <div class="detail-value">${event.event.replace(/_/g, ' ')}</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Timestamp</div>
+                                <div class="detail-value">${event.timestamp}</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Event ID</div>
+                                <div class="detail-value">${eventId}</div>
+                            </div>
+                        </div>
+                        <h4 style="color: #667eea; margin: 15px 0;">🖥️ System Information</h4>
+                        <div class="detail-grid">
+                            <div class="detail-item">
+                                <div class="detail-label">Version</div>
+                                <div class="detail-value">${event.version || 'Unknown'}</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Platform</div>
+                                <div class="detail-value">${event.platform || 'Unknown'}</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Architecture</div>
+                                <div class="detail-value">${event.arch || 'Unknown'}</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Node Version</div>
+                                <div class="detail-value">${event.nodeVersion || 'Unknown'}</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Install Location</div>
+                                <div class="detail-value">${event.installLocation || 'Unknown'}</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Domain</div>
+                                <div class="detail-value">${event.domain || 'Unknown'}</div>
+                            </div>
+                        </div>
+                    `;
+                    
+                    recentEvents.appendChild(eventItem);
+                    recentEvents.appendChild(expandedDetails);
+                });
+            } else {
+                recentEvents.innerHTML = '<div class="event-item"><div class="event-info"><div class="event-type">No events yet</div><div class="event-user">Waiting for first installation...</div></div></div>';
+            }
+        }
+        
+        function toggleEventDetails(eventId) {
+            const details = document.getElementById(eventId);
+            details.classList.toggle('show');
+        }
+
+        function getTimeAgo(date) {
+            const now = new Date();
+            const diff = now - date;
+            const minutes = Math.floor(diff / 60000);
+            const hours = Math.floor(diff / 3600000);
+            const days = Math.floor(diff / 86400000);
+
+            if (minutes < 1) return 'Just now';
+            if (minutes < 60) return `${minutes}m ago`;
+            if (hours < 24) return `${hours}h ago`;
+            return `${days}d ago`;
+        }
+
+        function setStatus(status) {
+            const statusElement = document.getElementById('status');
+            if (status === 'live') {
+                statusElement.textContent = '🟢 Live';
+                statusElement.className = 'status-indicator status-live';
+                isLive = true;
+            } else if (status === 'error') {
+                statusElement.textContent = '🔴 Offline';
+                statusElement.className = 'status-indicator status-error';
+                isLive = false;
+            }
+        }
+
+        function startRealTimeUpdates() {
+            // Initial fetch
+            fetchStats();
+            
+            // Update every 10 seconds
+            refreshInterval = setInterval(fetchStats, 10000);
+        }
+
+        function stopRealTimeUpdates() {
+            if (refreshInterval) {
+                clearInterval(refreshInterval);
+            }
+        }
+
+        // Start real-time updates when page loads
+        document.addEventListener('DOMContentLoaded', startRealTimeUpdates);
+
+        // Handle page visibility changes to pause/resume updates
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) {
+                stopRealTimeUpdates();
+            } else {
+                startRealTimeUpdates();
+            }
+        });
+
+        // Manual refresh on click
+        document.addEventListener('click', (e) => {
+            if (e.target.id === 'status') {
+                fetchStats();
+            }
+        });
+    </script>
 </body>
 </html>

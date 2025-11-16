@@ -1,0 +1,30 @@
+{
+  "name": "testgenie-analytics",
+  "version": "1.0.1",
+  "description": "Real-time analytics dashboard for TestGenie CLI",
+  "type": "module",
+  "main": "index.html",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "scripts": {
+    "dev": "vercel dev",
+    "build": "echo 'No build step required'",
+    "deploy": "vercel --prod",
+    "test": "node ../test-vercel-analytics.js"
+  },
+  "keywords": [
+    "analytics",
+    "testgenie",
+    "cli",
+    "dashboard"
+  ],
+  "author": "CoreLogic Solutions",
+  "license": "MIT",
+  "dependencies": {
+    "@supabase/supabase-js": "^2.38.0"
+  },
+  "devDependencies": {
+    "vercel": "^32.0.0"
+  }
+}

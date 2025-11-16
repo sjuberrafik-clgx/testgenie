@@ -1,51 +1,115 @@
-<<<<<<< HEAD
-# TestGenie CLI
+# 🧞‍♀️ TestGenie CLI - Professional Testing Assistant
 
-🧞‍♀️ **AI-Powered Testing Tools for VS Code Projects**
+[![npm version](https://img.shields.io/npm/v/testgenie-cli.svg)](https://www.npmjs.com/package/testgenie-cli)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Analytics Dashboard](https://img.shields.io/badge/Analytics-Dashboard-purple.svg)](https://vercel-analytics-o7p72kceb-shaikhjuber1432-gmailcoms-projects.vercel.app)
 
-TestGenie CLI brings GitHub Copilot Chatmodes directly to your development workflow, providing AI-powered test generation, bug reporting, and automation script creation.
+TestGenie is a powerful CLI tool that brings AI-powered testing assistance directly to your development workflow through VS Code's Model Context Protocol (MCP).
 
-## 🚀 Quick Start
+## 🚀 Features
+
+- **🧞‍♀️ AI-Powered Test Generation**: Generate comprehensive tests with intelligent analysis
+- **🐛 Smart Bug Detection**: Advanced debugging and issue identification
+- **📜 Script Generation**: Automated script creation for various testing scenarios
+- **📊 Professional Analytics**: Real-time usage analytics with detailed insights
+- **🎨 VS Code Integration**: Seamless integration through Model Context Protocol
+- **👤 Profile Support**: Automatic VS Code profile detection and configuration
+
+## 📦 Quick Installation
 
 ```bash
-npx testgenie-cli install
+# Install globally
+npm install -g testgenie-cli@latest
+
+# Or use directly with npx
+npx testgenie-cli@latest --help
 ```
 
-That's it! One command installs everything you need.
+## 🛠️ Usage
 
-## ✨ What You Get
+### Basic Commands
 
-### **🧞‍♀️ TestGenie - Test Case Generation**
-- Generate comprehensive test cases from Jira tickets
-- Create Mocha/Chai test frameworks
-- AI-powered edge case detection
-- Integration with popular testing tools
+```bash
+# Initialize TestGenie in your project
+testgenie-cli init
 
-### **🪰 BugGenie - Smart Bug Reporting**
-- Create detailed bug reports with standardized format
-- Direct Jira ticket integration
-- Automatic environment information capture
-- Reproducible steps generation
+# Generate tests for your code
+testgenie-cli test <file-path>
 
-### **🤖 ScriptGenerator - Automation Made Easy**
-- Generate Playwright automation scripts
-- Real-time browser testing
-- End-to-end workflow automation
-- Cross-browser compatibility testing
+# Configure MCP integration
+testgenie-cli mcp
 
-## 📦 Complete Testing Environment
+# List available VS Code profiles
+testgenie-cli mcp --list-profiles
 
-TestGenie automatically installs and configures:
+# Configure for specific VS Code profile
+testgenie-cli mcp --profile <profile-name>
+```
 
-- **Playwright** - Browser automation framework
-- **Mocha & Chai** - Testing framework and assertions
-- **TypeScript** - Type-safe development
-- **Allure Reports** - Beautiful test reporting
-- **Atlassian MCP** - Jira integration via Model Context Protocol
+### MCP Integration
 
-## 🎯 Usage
+TestGenie integrates with VS Code through the Model Context Protocol:
 
-After installation, open VS Code and access GitHub Copilot Chat:
+1. **Automatic Setup**: Run `testgenie-cli mcp` for automatic configuration
+2. **Profile Detection**: Automatically detects and uses appropriate VS Code profile
+3. **Manual Configuration**: Specify custom profile with `--profile` option
+
+## 📊 Analytics Dashboard
+
+Monitor usage and performance through our professional analytics dashboard:
+
+**🔗 [Live Analytics Dashboard](https://vercel-analytics-o7p72kceb-shaikhjuber1432-gmailcoms-projects.vercel.app)**
+
+### Dashboard Features
+
+- **📈 Real-time Statistics**: Total events, daily usage, unique users
+- **🧞‍♀️ Professional Design**: Clean, modern interface with genie theming
+- **📄 Event Pagination**: Navigate through historical usage data
+- **🔍 Detailed Event Information**: Expandable cards with comprehensive details
+- **📱 Responsive Design**: Works perfectly on desktop and mobile
+
+### Event Details Tracked
+
+- User information (username, email, hostname)
+- System details (platform, architecture, Node.js version)
+- CLI usage patterns (commands, install locations, sessions)
+- Performance metrics and error tracking
+
+## 🎨 Chat Modes
+
+TestGenie includes specialized AI chat modes for different testing scenarios:
+
+### 🧞‍♀️ TestGenie Mode
+- Comprehensive test generation
+- Test strategy recommendations
+- Code coverage analysis
+
+### 🪐 BugGenie Mode
+- Advanced bug detection
+- Root cause analysis
+- Fix recommendations
+
+### 🤖 ScriptGenerator Mode
+- Automated script creation
+- Workflow automation
+- Custom tool generation
+
+## 📁 Project Structure
+
+```
+testgenie/
+├── 🧞‍♀️ bin/           # CLI executable
+├── 📚 lib/           # Core libraries
+│   ├── analytics.js  # Usage analytics
+│   ├── github-analytics.js
+│   └── chatmode-manager.js
+├── 📋 templates/     # Configuration templates
+│   ├── mcp.json
+│   └── chatmodes/   # AI chat mode definitions
+├── 📊 analytics-dashboard/ # Local dashboard
+├── 🌐 vercel-analytics/    # Production dashboard
+└── 📖 docs/         # Documentation
+```
 
 ```
 @TestGenie Generate test cases for login functionality

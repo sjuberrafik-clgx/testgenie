@@ -1,7 +1,7 @@
 {
   "name": "project-with-testgenie",
   "version": "1.0.0",
-  "description": "Project with TestGenie chatmodes and testing dependencies",
+  "description": "Project with TestGenie chatmodes and testing dependencies - Created by TestGenie CLI v1.4.7",
   "scripts": {
     "test": "npx playwright test",
     "test:headed": "npx playwright test --headed",
