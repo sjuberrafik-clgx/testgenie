@@ -2,7 +2,7 @@
 
 [![npm version](https://img.shields.io/npm/v/testgenie-cli.svg)](https://www.npmjs.com/package/testgenie-cli)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Analytics Dashboard](https://img.shields.io/badge/Analytics-Dashboard-purple.svg)](https://vercel-analytics-o7p72kceb-shaikhjuber1432-gmailcoms-projects.vercel.app)
+[![Analytics Dashboard](https://img.shields.io/badge/Analytics-Dashboard-purple.svg)](https://vercel-analytics-6btqbortq-shaikhjuber1432-gmailcoms-projects.vercel.app)
 
 TestGenie is a powerful CLI tool that brings AI-powered testing assistance directly to your development workflow through VS Code's Model Context Protocol (MCP).
 
@@ -11,7 +11,7 @@ TestGenie is a powerful CLI tool that brings AI-powered testing assistance direc
 - **🧞‍♀️ AI-Powered Test Generation**: Generate comprehensive tests with intelligent analysis
 - **🐛 Smart Bug Detection**: Advanced debugging and issue identification
 - **📜 Script Generation**: Automated script creation for various testing scenarios
-- **📊 Professional Analytics**: Real-time usage analytics with detailed insights
+- 📊 **Analytics**: [Dashboard](https://vercel-analytics-6btqbortq-shaikhjuber1432-gmailcoms-projects.vercel.app)
 - **🎨 VS Code Integration**: Seamless integration through Model Context Protocol
 - **👤 Profile Support**: Automatic VS Code profile detection and configuration
 
@@ -58,7 +58,7 @@ TestGenie integrates with VS Code through the Model Context Protocol:
 
 Monitor usage and performance through our professional analytics dashboard:
 
-**🔗 [Live Analytics Dashboard](https://vercel-analytics-o7p72kceb-shaikhjuber1432-gmailcoms-projects.vercel.app)**
+**🔗 [Live Analytics Dashboard](https://vercel-analytics-6btqbortq-shaikhjuber1432-gmailcoms-projects.vercel.app)**
 
 ### Dashboard Features
 
