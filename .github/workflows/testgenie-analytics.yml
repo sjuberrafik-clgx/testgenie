@@ -1,0 +1,54 @@
+﻿name: TestGenie Analytics Webhook
+
+on:
+  repository_dispatch:
+    types: [testgenie_analytics]
+
+jobs:
+  create-analytics-issue:
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      contents: read
+    
+    steps:
+      - name: Create Analytics Issue
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const p = context.payload.client_payload;
+            const eventId = `${p.action}-${Date.now()}`;
+            
+            const body = `##  TestGenie Analytics
+
+            ###  Event
+            - **Action**: ${p.action}
+            - **Time**: ${p.timestamp}
+            - **Version**: ${p.version}
+            - **Event ID**: ${eventId}
+
+            ###  System
+            - **Platform**: ${p.platform}
+            - **Arch**: ${p.arch}
+            - **Node**: ${p.nodeVersion}
+            - **Install Method**: ${p.installMethod || 'unknown'}
+
+            ###  Command
+            - **Command**: ${p.command || 'N/A'}
+            - **Success**: ${p.success !== false ? ' Yes' : ' No'}
+            ${p.duration ? `- **Duration**: ${p.duration}ms` : ''}
+
+            ---
+             Anonymous Analytics Tracking  
+            ${new Date(p.timestamp).toLocaleString()}`;
+
+            const issue = await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `[Analytics] ${p.action} - ${new Date().toISOString().split('T')[0]}`,
+              body: body,
+              labels: ['analytics', p.action, p.platform || 'unknown', 'anonymous']
+            });
+
+            console.log(`Created analytics issue #${issue.data.number}`);
